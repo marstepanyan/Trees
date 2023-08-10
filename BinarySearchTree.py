@@ -16,7 +16,7 @@ class BinarySearchTree:
         return self._get_height(self.root)
 
     def _get_height(self, node):
-        if node is None:
+        if not node:
             return 0
         else:
             left_height = self._get_height(node.left)
@@ -27,7 +27,7 @@ class BinarySearchTree:
         return self._get_num_nodes(self.root)
 
     def _get_num_nodes(self, node):
-        if node is None:
+        if not node:
             return 0
         else:
             left_count = self._get_num_nodes(node.left)
@@ -35,23 +35,62 @@ class BinarySearchTree:
             return left_count + right_count + 1
 
     def get_root_data(self):
-        if self.root is not None:
+        if self.root:
             return self.root.data
+        return
 
     def insert(self, data):
-        if self.root is None:
+        if not self.root:
             self.root = Node(data)
         else:
             self._insert(data, self.root)
 
+    def get_successor(self, data):
+        node = self._find_node(data, self.root)
+        if node:
+            return None
+
+        successor = self._find_successor(node)
+        if not successor:
+            return None
+
+        return successor.data
+
+    def _find_node(self, data, node):
+        if not node or node.data == data:
+            return node
+
+        if data < node.data:
+            return self._find_node(data, node.left)
+        else:
+            return self._find_node(data, node.right)
+
+    def _find_successor(self, node):
+        if node.right:
+            return self._find_min(node.right)
+
+        successor = None
+        current = self.root
+
+        while current:
+            if node.data < current.data:
+                successor = current
+                current = current.left
+            elif node.data > current.data:
+                current = current.right
+            else:
+                break
+
+        return successor
+
     def _insert(self, data, node):
         if data < node.data:
-            if node.left is None:
+            if not node.left:
                 node.left = Node(data)
             else:
                 self._insert(data, node.left)
         else:
-            if node.right is None:
+            if not node.right:
                 node.right = Node(data)
             else:
                 self._insert(data, node.right)
@@ -60,7 +99,7 @@ class BinarySearchTree:
         self.root = self._remove(data, self.root)
 
     def _remove(self, data, node):
-        if node is None:
+        if not node:
             return None
 
         if data < node.data:
@@ -68,11 +107,11 @@ class BinarySearchTree:
         elif data > node.data:
             node.right = self._remove(data, node.right)
         else:
-            if node.left is None and node.right is None:
+            if not node.left and not node.right:
                 return None
-            elif node.left is None:
+            elif not node.left:
                 return node.right
-            elif node.right is None:
+            elif not node.right:
                 return node.left
             else:
                 successor = self._find_min(node.right)
@@ -81,9 +120,9 @@ class BinarySearchTree:
 
         return node
 
-    def _find_min(self, node):
+    def _find_min(self, node):          # for inorder successor
         current = node
-        while current.left is not None:
+        while current.left:
             current = current.left
         return current
 
@@ -94,7 +133,7 @@ class BinarySearchTree:
         return self._retrieve(data, self.root)
 
     def _retrieve(self, data, node):
-        if node is None:
+        if not node:
             return None
 
         if data == node.data:
@@ -108,7 +147,7 @@ class BinarySearchTree:
         return self._contains(data, self.root)
 
     def _contains(self, data, node):
-        if node is None:
+        if not node:
             return False
 
         if data == node.data:
@@ -123,7 +162,7 @@ class BinarySearchTree:
         print()
 
     def _preorder_traversal(self, node):
-        if node is not None:
+        if node:
             print(node.data, end=" ")
             self._preorder_traversal(node.left)
             self._preorder_traversal(node.right)
@@ -133,7 +172,7 @@ class BinarySearchTree:
         print()
 
     def _inorder_traversal(self, node):
-        if node is not None:
+        if node:
             self._inorder_traversal(node.left)
             print(node.data, end=" ")
             self._inorder_traversal(node.right)
@@ -143,7 +182,7 @@ class BinarySearchTree:
         print()
 
     def _postorder_traversal(self, node):
-        if node is not None:
+        if node:
             self._postorder_traversal(node.left)
             self._postorder_traversal(node.right)
             print(node.data, end=" ")
